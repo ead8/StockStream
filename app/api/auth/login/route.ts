@@ -5,10 +5,18 @@ export async function POST(request: Request) {
   try {
     const body = await request.json();
     const result = await login(body);
-    return NextResponse.json(result);
+    return NextResponse.json(result, {
+      status: 200,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    });
   } catch (error) {
     return NextResponse.json(
-      { message: error instanceof Error ? error.message : 'Something went wrong' },
+      { 
+        success: false,
+        message: error instanceof Error ? error.message : 'Authentication failed'
+      },
       { status: 400 }
     );
   }

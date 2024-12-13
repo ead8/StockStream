@@ -42,31 +42,30 @@ export function AuthModal({ isOpen, onClose }: AuthModalProps) {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data),
       });
-
-      const result = await response.json();
-
+  
       if (!response.ok) {
-        throw new Error(result.message);
+        const errorData = await response.json();
+        throw new Error(errorData.message || 'Authentication failed');
       }
-
+  
+      const result = await response.json();
       localStorage.setItem('token', result.token);
       setUser(result.user);
       toast({
         title: isLogin ? 'Welcome back!' : 'Account created',
-        description: isLogin
-          ? 'Successfully logged in to your account'
-          : 'Your account has been created successfully',
+        description: isLogin ? 'Login successful' : 'Account created successfully'
       });
       reset();
       onClose();
     } catch (error) {
       toast({
         title: 'Error',
-        description: error instanceof Error ? error.message : 'Something went wrong',
+        description: error instanceof Error ? error.message : 'Authentication failed',
         variant: 'destructive',
       });
     }
   };
+  
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
